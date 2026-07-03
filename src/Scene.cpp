@@ -1,0 +1,106 @@
+#include "../inc/Scene.hpp"
+#include <cstdint>
+#include <memory>
+
+#include "../inc/Engine.hpp"
+#include "../inc/Renderer.hpp"
+
+Entity& Scene::Add(const std::vector<Components> &components)
+{
+    auto entity = std::make_shared<Entity>();
+    entity->PopulateComponents(components);
+    
+    
+    entity->uniformBuffers.resize(2);
+    
+    wgpu::BufferDescriptor pvmBufferDesc = {};
+    pvmBufferDesc.usage = wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Uniform;
+    pvmBufferDesc.mappedAtCreation = false;
+    pvmBufferDesc.size = sizeof(Uniforms::PVM);
+    entity->uniformBuffers[0] = engine.backend.GetDevice().CreateBuffer(&pvmBufferDesc);
+    
+    wgpu::BufferDescriptor materialBufferDesc = {};
+    materialBufferDesc.usage = wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Uniform;
+    materialBufferDesc.mappedAtCreation = false;
+    materialBufferDesc.size = sizeof(Uniforms::Material);
+    entity->uniformBuffers[1] = engine.backend.GetDevice().CreateBuffer(&materialBufferDesc);
+    
+    entity->pipeline = &engine.renderer.GetPipeline("default");
+    
+    std::vector<float> vertexData = 
+    {
+        // position      // uv
+        0.0f, 0.0f,     0.0f, 0.0f,  // top-left
+        1.0f, 0.0f,     1.0f, 0.0f,  // top-right
+        1.0f, 1.0f,     1.0f, 1.0f,  // bottom-right
+        0.0f, 1.0f,     0.0f, 1.0f,  // bottom-left
+    };
+    
+    std::vector<uint16_t> indexData = 
+    {
+        0, 1, 2,
+        0, 2, 3
+    };
+    
+    /* Vertex and Index Buffer */
+    wgpu::BufferDescriptor vertexBuffDesc = {};
+    vertexBuffDesc.size = vertexData.size() * sizeof(float);
+    vertexBuffDesc.usage = wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Vertex;
+    vertexBuffDesc.mappedAtCreation = false;
+    
+    entity->vertexBuffer =  engine.backend.GetDevice().CreateBuffer(&vertexBuffDesc);
+    engine.backend.GetQueue().WriteBuffer(entity->vertexBuffer, 0, vertexData.data(), vertexBuffDesc.size);
+    
+    wgpu::BufferDescriptor indexBuffDesc = {};
+    indexBuffDesc.size = indexData.size() * sizeof(uint16_t);
+    indexBuffDesc.usage = wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Index;
+    indexBuffDesc.mappedAtCreation = false;
+    
+    entity->indexBuffer =  engine.backend.GetDevice().CreateBuffer(&indexBuffDesc);
+    engine.backend.GetQueue().WriteBuffer(entity->indexBuffer, 0, indexData.data(), indexBuffDesc.size);
+    
+    /*
+    wgpu::BindGroupDescriptor bindGroupDescriptor = {};
+    bindGroupDescriptor.layout = engine.renderer.GetBindGroupLayout();
+    bindGroupDescriptor.entryCount = entries.size();
+    bindGroupDescriptor.entries = entries.data();
+    */
+    
+    auto &image = engine.resources.GetImage(entity->sprite);
+    entity->textureSize = glm::vec2(image.w, image.h);
+    
+    std::vector<wgpu::BindGroupEntry> entries(4);
+    
+    entries[0] = {};
+    entries[0].binding = 0;
+    entries[0].buffer = entity->uniformBuffers[0];
+    entries[0].offset = 0;
+    entries[0].size = sizeof(Uniforms::PVM);
+    
+    // Attributes
+    entries[1] = {};
+    entries[1].binding = 1;
+    entries[1].buffer = entity->uniformBuffers[1];
+    entries[1].offset = 0;
+    entries[1].size = sizeof(Uniforms::Material);
+    
+    // Texture
+    entries[2] = {};
+    entries[2].binding = 2;
+    entries[2].textureView = image.view;
+    
+    // Sampler
+    entries[3] = {};
+    entries[3].binding = 3;
+    entries[3].sampler = image.sampler;
+    
+    wgpu::BindGroupDescriptor bindGroupDescriptor = {};
+    bindGroupDescriptor.layout = engine.renderer.bindGroupLayout;
+    bindGroupDescriptor.entryCount = entries.size();
+    bindGroupDescriptor.entries = entries.data();
+    
+    entity->bindGroup = engine.backend.GetDevice().CreateBindGroup(&bindGroupDescriptor);
+    
+    entities.push_back(entity);
+    return *entity;
+}
