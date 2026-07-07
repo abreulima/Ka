@@ -20,6 +20,7 @@ class Engine
         std::string currentScene;
         std::uint64_t lasTime;
         double acc = 0.0f;
+        double time = 0.0f;
         
         void Start();
         void Update();

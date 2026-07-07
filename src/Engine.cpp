@@ -69,7 +69,9 @@ void Engine::Update()
     
     if (dt > 0.25f)
         dt = 0.25f;
-        
+    
+    time += dt;
+    
     if (OnUpdate)
         OnUpdate.value()();
     
@@ -93,6 +95,10 @@ void Engine::Update()
         
         //std::cout << SDL_PointInRectFloat(&mousePoint, &entityFRect) << std::endl;
         
+        if (isMouseLeftClicked)
+        {
+            std::cout << mousePoint.x << " " << mousePoint.y << std::endl;
+        }
         
         // Hover 
         if (e->onHover && isMouseOver)

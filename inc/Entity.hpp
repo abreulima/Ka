@@ -31,7 +31,7 @@ class Entity
     Image* image;
     LayerType layer;
     bool isFlipped;
-    
+    float rotation;
     
     std::optional<SDL_FRect> area;
     

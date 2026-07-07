@@ -20,6 +20,7 @@ void Entity::PopulateComponents(const std::vector<Components>& components)
     isFlipped = false;
     anchorOffset = glm::vec2(0);
     std::optional<glm::vec4> area = std::nullopt;
+    rotation = 0.0f;
     
     this->components = components;
     

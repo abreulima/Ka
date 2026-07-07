@@ -2,6 +2,7 @@
 #include "inc/Engine.hpp"
 #include "inc/Renderer.hpp"
 #include "inc/Scene.hpp"
+#include "inc/glm/trigonometric.hpp"
 
 #include <SDL3/SDL_misc.h>
 #include <SDL3/SDL_scancode.h>
@@ -22,8 +23,41 @@ int main()
     engine.resources.LoadImage("Coin", "coin.png");
     engine.resources.LoadImage("Slime", "slime-2.png");
     engine.resources.LoadImage("YouTube", "youtube.png");
+    engine.resources.LoadImage("Play", "play.png");
+    engine.resources.LoadImage("HowToPlay", "how_to_play.png");
+    engine.resources.LoadImage("Game", "name.png");
     
     Scene scene = Scene(engine);
+    
+    auto& name = scene.Add({
+       Sprite{"Game"},
+       Anchor{AnchorPosition::CENTER},
+       Layer{LayerType::UI},
+       Scale{2, 2},
+       Position{960 / 2, 120}
+    });
+    
+    
+    name.onUpdate = [&engine, &name](float dt)
+    {
+        name.rotation = std::sin(engine.time) * 5.0f;
+    };
+    
+    auto& play = scene.Add({
+        Sprite{"Play"},
+        Scale{2, 2},
+        Position{960 / 2, 540 / 2 + 60},
+        Anchor{AnchorPosition::CENTER},
+        Layer{LayerType::UI}
+    });
+    
+    auto& howToPlay = scene.Add({
+        Sprite{"HowToPlay"},
+        Scale{2, 2},
+        Position{960 / 2, 540 / 2 + 160},
+        Anchor{AnchorPosition::CENTER},
+        Layer{LayerType::UI}
+    });
     
     auto& player = scene.Add({
         Tag{"Hello"},
@@ -46,7 +80,7 @@ int main()
         
     });
     
-    scene.Add({
+    auto& milk = scene.Add({
         Tag{"Player"},
         Sprite{"Milk"},
         Scale{2, 2},
@@ -54,6 +88,12 @@ int main()
         // Opacity
         Position{324, 324}
     });
+    
+    float baseY = milk.position.y;
+    milk.onUpdate = [&engine, &milk, &baseY](float dt){
+        milk.position.y = baseY - glm::sin(engine.time * 2.0f) * 5.0f;
+    };
+    
     
     youtube.onClick = []()
     {

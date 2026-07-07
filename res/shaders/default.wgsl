@@ -44,7 +44,7 @@ fn fs_main(in: VertexOuput) ->@location(0) vec4f
 	let color = textureSample(texture, textureSampler, in.uv).rgba;
  
 	// Game Correction
-	//let corrected_color = pow(color.rgb * material.color.rgb, vec3f(2.2));
+	let corrected_color = pow(color.rgb * material.color.rgb, vec3f(2.2));
 	
-	return color;
+	return vec4f(corrected_color, color.a);
 }

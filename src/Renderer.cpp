@@ -223,6 +223,7 @@ void Renderer::Render(std::vector<std::shared_ptr<Entity>> entities)
             
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, glm::vec3(entity->position, 0.0f));
+            model = glm::rotate(model, glm::radians(entity->rotation), glm::vec3(0.0f, 0.0f, 1.0f));
             model = glm::scale(model, glm::vec3(entity->textureSize * entity->scale, 1.0f));
             model = glm::translate(model, glm::vec3(-entity->anchorOffset, 0.0f));
             
