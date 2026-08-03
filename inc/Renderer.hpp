@@ -68,7 +68,7 @@ class Renderer
         );
         void ConfigureRenderer();
         
-        void Render(std::vector<std::shared_ptr<Entity>> entities);
+        void Render(std::vector<std::shared_ptr<Entity>>& entities, const glm::vec2& cameraPosition);
         
         void CreatePipeline(
             std::string name, 

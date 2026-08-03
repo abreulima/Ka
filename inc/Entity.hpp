@@ -11,7 +11,8 @@
 
 #include "Renderer.hpp"
 #include "Resources.hpp"
-#include "glm/glm.hpp"
+
+#include <sol/sol.hpp>
 
 #include <webgpu/webgpu_cpp.h>
 
@@ -32,19 +33,30 @@ class Entity
     LayerType layer;
     bool isFlipped;
     float rotation;
+    bool isHovered = false;
     
     std::optional<SDL_FRect> area;
     
     glm::vec2 anchorOffset;
     std::optional<std::string> url = std::nullopt;
- 
+
+
+    void LuaOnUpdate(float dt);
     
     
     std::vector<Components> components;    
-    
+
+    // C++ Callbacks
     std::optional<std::function<void(float)>> onUpdate = std::nullopt;
     std::optional<std::function<float(void)>> onStart = std::nullopt;
     std::optional<std::function<float(void)>> onRender = std::nullopt;
+
+    // Lua Callbacks
+    sol::protected_function luaOnUpdate;
+
+    
+    //std::function<void(Entity&, float)> onUpdateLua;
+    //std::function<void(Entity&)> onClickLua;
     
     // Button Related
     std::optional<std::function<void(void)>> onClick = std::nullopt;
@@ -78,7 +90,8 @@ class Entity
         }
         return nullptr;
     }
-    
+
+    /*
     template <typename T>
     T* GetData(const std::string& key)
     {
@@ -94,7 +107,7 @@ class Entity
         
         return std::any_cast<T>(&it->second);
     }
-    
+    */
 };
 
 #endif

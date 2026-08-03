@@ -1,5 +1,6 @@
 #include "../inc/Engine.hpp"
 #include "../inc/Backend.hpp"
+#include "../inc/LuaRuntime.hpp"
 
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_mouse.h>
@@ -26,6 +27,9 @@ void Engine::Start()
     renderer.Init(backend.GetDevice(), backend.GetQueue(), backend.GetFormat(), backend.surface);
     resources.Init(backend.GetDevice(), backend.GetQueue());
     events.Init();
+
+    luaRuntime.Init(*this);
+    
     
     isRunning = true;
     lasTime = SDL_GetTicksNS();
@@ -83,17 +87,16 @@ void Engine::Update()
 
     for (auto &e : it->second.entities)
     {
+
         if (e->onUpdate)
             e->onUpdate.value()(dt);
+
+        // Forgotten for now
+        //e->LuaOnUpdate(dt);
         
+            
         SDL_FRect entityFRect = e->GetPositionRect();
         bool isMouseOver = SDL_PointInRectFloat(&mousePoint, &entityFRect);
-        
-        //std::cout << mousePoint.x << " " << mousePoint.y <<  std::endl;
-        //std::cout << entityFRect.x << " " << entityFRect.y <<  std::endl;
-        //std::cout << entityFRect.w << " " << entityFRect.h <<  std::endl;
-        
-        //std::cout << SDL_PointInRectFloat(&mousePoint, &entityFRect) << std::endl;
         
         if (isMouseLeftClicked)
         {
@@ -101,9 +104,11 @@ void Engine::Update()
         }
         
         // Hover 
-        if (e->onHover && isMouseOver)
+        if (isMouseOver && !e->isHovered)
         {
-            e->onHover.value()();
+            e->isHovered = true;
+            if (e->onHover)
+                e->onHover.value()();
         }
         
         // Click
@@ -113,9 +118,11 @@ void Engine::Update()
         }
         
         // End Hover
-        if (e->onHoverEnd && !isMouseOver)
+        if (!isMouseOver && e->isHovered)
         {
-            e->onHoverEnd.value()();
+            e->isHovered = false;
+            if (e->onHoverEnd)
+                e->onHoverEnd.value()();
         }
         
     }
@@ -131,7 +138,7 @@ void Engine::Render()
     if (it == scenes.end())
         return ;
     
-    renderer.Render(it->second.entities);
+    renderer.Render(it->second.entities, camera.position);
 }
 
 void Engine::End()

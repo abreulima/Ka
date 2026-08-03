@@ -44,7 +44,7 @@ void Entity::PopulateComponents(const std::vector<Components>& components)
             
             else if constexpr (std::is_same_v<T, Sprite>)
             {
-                this->sprite = c.sprite;
+                this->sprite = c.name;
             }
             
             else if constexpr (std::is_same_v<T, Scale>)
@@ -98,12 +98,21 @@ void Entity::PopulateComponents(const std::vector<Components>& components)
                     w = textureSize.x;
                     h = textureSize.y;
                 };
-                
+
+                /* 
                 this->area = SDL_FRect{
                     .x = position.x + x,
                     .y = position.y + y,
                     .w = w * scale.x,
                     .h = h * scale.y
+                };
+                */
+
+                this->area = SDL_FRect{
+                    .x = x,
+                    .y = y,
+                    .w = w,
+                    .h = h
                 };
                 
                 std::cout << this->tag << std::endl;
@@ -133,7 +142,7 @@ SDL_FRect Entity::GetPositionRect()
     if (this->area)
     {
         return SDL_FRect{
-            spriteTopleft.x + area->x * scale.y,
+            spriteTopleft.x + area->x * scale.x,
             spriteTopleft.y + area->y * scale.y,
             area->w * scale.x,
             area->h * scale.y
@@ -146,4 +155,20 @@ SDL_FRect Entity::GetPositionRect()
         spriteSize.x,
         spriteSize.y
     };
+}
+
+void Entity::LuaOnUpdate(float dt)
+{
+
+    if (!luaOnUpdate.valid())
+        return ;
+
+    sol::protected_function_result result = 
+        luaOnUpdate(std::ref(*this), dt);
+
+    if (!result.valid())
+    {
+        sol::error error = result;
+        std::cerr << "Entity OnUpdate Error: " << error.what() << std::endl;
+    }
 }

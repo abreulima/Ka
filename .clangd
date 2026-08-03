@@ -1,0 +1,2 @@
+CompileFlags:
+  Add: [-Iinc, -Iinc/lua, -std=c++20]

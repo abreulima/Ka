@@ -1,5 +1,6 @@
 #include "../inc/Renderer.hpp"
 
+#include <SDL3/SDL_rect.h>
 #include <cassert>
 #include <cstddef>
 #include <SDL3/SDL.h>
@@ -9,6 +10,7 @@
 #include "../inc/glm/gtc/matrix_transform.hpp"
 
 #include "../inc/Entity.hpp"
+#include "glm/fwd.hpp"
 #include <cstdint>
 #include <iostream>
 
@@ -187,7 +189,7 @@ void Renderer::Init(
     ConfigureRenderer();
 }
 
-void Renderer::Render(std::vector<std::shared_ptr<Entity>> entities)
+void Renderer::Render(std::vector<std::shared_ptr<Entity>>& entities, const glm::vec2& cameraPosition)
 {
     wgpu::TextureView targetView = GetCurrentTextureView();
     if (!targetView)
@@ -220,9 +222,25 @@ void Renderer::Render(std::vector<std::shared_ptr<Entity>> entities)
         {
             if (!entity->isActive) continue;
             if (entity->layer != layer) continue;
+
+            SDL_FRect screenRect = {cameraPosition.x, cameraPosition.y, float(WIDTH), float(HEIGHT)};
+            SDL_FRect entityRect = entity->GetPositionRect();
+
+            // If offscreen, and not UI element, dont render.
+            if (!SDL_HasRectIntersectionFloat(&entityRect, &screenRect) && 
+                entity->layer != LayerType::UI)
+                continue ;
+            
+            glm::vec2 cameraOffset = cameraPosition;
+            
+            if (layer == LayerType::UI)
+                cameraOffset = glm::vec2(0.0f);
             
             glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, glm::vec3(entity->position, 0.0f));
+            glm::vec2 renderPosition = glm::round(entity->position - cameraOffset);
+            //renderPosition = entity->position;
+
+            model = glm::translate(model, glm::vec3(renderPosition, 0.0f));
             model = glm::rotate(model, glm::radians(entity->rotation), glm::vec3(0.0f, 0.0f, 1.0f));
             model = glm::scale(model, glm::vec3(entity->textureSize * entity->scale, 1.0f));
             model = glm::translate(model, glm::vec3(-entity->anchorOffset, 0.0f));

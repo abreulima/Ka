@@ -78,7 +78,7 @@ Image Resources::LoadImage(std::string name, std::string path)
     queue.WriteTexture(
         &dst, 
         converted->pixels, 
-        w * h * sizeof(uint32_t), 
+        converted->pitch *  converted->h, //w * h * sizeof(uint32_t), 
         &src, 
         &textureDesc.size
     );
