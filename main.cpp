@@ -4,6 +4,7 @@
 #include "inc/Renderer.hpp"
 #include "inc/Scene.hpp"
 
+#include <SDL3/SDL_gamepad.h>
 #include <SDL3/SDL_misc.h>
 #include <SDL3/SDL_rect.h>
 #include <SDL3/SDL_scancode.h>
@@ -210,7 +211,8 @@ int main()
     engine.resources.LoadImage("grass-left", "grass-left.png");
     engine.resources.LoadImage("grass-right-middle", "grass-right-middle.png");
     engine.resources.LoadImage("grass-left-middle", "grass-left-middle.png");
-    
+
+    engine.resources.LoadFont("monogram", "res/fonts/monogram-extended.ttf", 16);
     
     //engine.luaRuntime.LoadScript("_game/ASTRID_01/scripts/main.lua");
     
@@ -267,6 +269,28 @@ int main()
         Scale{2}
     });
     
+
+    scene.Add({
+        Position{0, 0},
+        //Sprite{"Milk"},
+        Line{glm::vec2(0, 0), glm::vec2(100, 100)},
+        //Fixed{},
+        //Scale{2}
+    });
+
+    scene.Add({
+        Position{WIDTH / 2, HEIGHT / 2},
+        Rect{32 * 4, 32 * 4},
+        //Fixed{},
+    });
+
+    scene.Add({
+        Position{100, 100},
+        Text("Please, subscribe!"),
+        Layer{LayerType::FG},
+        Scale{3}
+    });
+    
     
     for (int i = 0 ; i < 50; i++)
     {
@@ -293,24 +317,39 @@ int main()
     
     player.onUpdate = [&engine, &player, groundY](float dt){
 
+        SDL_Gamepad* gamepad = engine.backend.gamepad;
+        
         auto platformer = player.GetComponent<Platformer>();
         if (!platformer) return ;
 
-        if (engine.events.IsKeyDown(SDL_SCANCODE_LEFT))
+        if (
+            engine.events.IsKeyDown(SDL_SCANCODE_LEFT) ||
+            engine.events.IsButtonDown(gamepad, SDL_GAMEPAD_BUTTON_DPAD_LEFT) ||
+            engine.events.GetAxisValue(gamepad, SDL_GAMEPAD_AXIS_LEFTX) > 0.2f
+        )
         {
-            platformer->velocity.x = - platformer->moveSpeed;
+            platformer->velocity.x = -platformer->moveSpeed;
             player.Flip(true);
         }
-        else if (engine.events.IsKeyDown(SDL_SCANCODE_RIGHT))
+        else if (
+            engine.events.IsKeyDown(SDL_SCANCODE_RIGHT) ||
+            engine.events.IsButtonDown(gamepad, SDL_GAMEPAD_BUTTON_DPAD_RIGHT) ||
+            engine.events.GetAxisValue(gamepad, SDL_GAMEPAD_AXIS_LEFTX) > 0.2f
+        )
         {
-            platformer->velocity.x = + platformer->moveSpeed;
+            platformer->velocity.x = +platformer->moveSpeed;
             player.Flip(false);
         }
         else 
             platformer->velocity.x = 0;
 
 
-        if (engine.events.IsKeyDown(SDL_SCANCODE_SPACE) && platformer->isGrounded)
+        if (
+            (
+                engine.events.IsKeyDown(SDL_SCANCODE_SPACE) ||
+                engine.events.IsButtonDown(gamepad, SDL_GAMEPAD_BUTTON_SOUTH)
+            ) 
+            && platformer->isGrounded)
         {
             platformer->velocity.y = -platformer->jumpSpeed;
             platformer->isGrounded = false;

@@ -6,6 +6,7 @@
 #include <SDL3/SDL_properties.h>
 #include <SDL3/SDL_stdinc.h>
 #include <SDL3/SDL_video.h>
+#include <SDL3_ttf/SDL_ttf.h>
 #include <cassert>
 #include <cstddef>
 #include <cstdint>
@@ -15,7 +16,8 @@
 
 void Backend::Init()
 {
-    SDL_Init(SDL_INIT_VIDEO);
+    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD);
+    TTF_Init();
     
     window = SDL_CreateWindow(
         "NK",

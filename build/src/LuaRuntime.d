@@ -226,7 +226,8 @@ build/src/LuaRuntime.o: src/LuaRuntime.cpp src/../inc/LuaRuntime.hpp \
   inc/sol/userdata.hpp inc/sol/as_args.hpp inc/sol/variadic_args.hpp \
   inc/sol/variadic_results.hpp inc/sol/as_returns.hpp \
   src/../inc/Scene.hpp src/../inc/Entity.hpp src/../inc/Resources.hpp \
-  src/../inc/Engine.hpp src/../inc/Backend.hpp src/../inc/Events.hpp
+  inc/glm/glm.hpp src/../inc/Engine.hpp src/../inc/Backend.hpp \
+  src/../inc/Events.hpp
 src/../inc/LuaRuntime.hpp:
 src/../inc/Components.hpp:
 src/../inc/Renderer.hpp:
@@ -538,6 +539,7 @@ inc/sol/as_returns.hpp:
 src/../inc/Scene.hpp:
 src/../inc/Entity.hpp:
 src/../inc/Resources.hpp:
+inc/glm/glm.hpp:
 src/../inc/Engine.hpp:
 src/../inc/Backend.hpp:
 src/../inc/Events.hpp:

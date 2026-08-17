@@ -174,11 +174,12 @@ build/src/Scene.o: src/Scene.cpp src/../inc/Scene.hpp \
   src/../inc/glm/detail/type_half.inl src/../inc/glm/geometric.hpp \
   src/../inc/glm/matrix.hpp src/../inc/glm/vector_relational.hpp \
   src/../inc/glm/integer.hpp src/../inc/glm/detail/func_integer.inl \
-  src/../inc/Resources.hpp inc/sol/sol.hpp inc/sol/version.hpp \
-  inc/sol/config.hpp inc/lua/lua.hpp inc/sol/prologue.hpp \
-  inc/sol/epilogue.hpp inc/sol/detail/build_version.hpp \
-  inc/sol/forward.hpp inc/sol/forward_detail.hpp inc/sol/traits.hpp \
-  inc/sol/tuple.hpp inc/sol/base_traits.hpp inc/sol/bind_traits.hpp \
+  src/../inc/Resources.hpp inc/glm/glm.hpp inc/sol/sol.hpp \
+  inc/sol/version.hpp inc/sol/config.hpp inc/lua/lua.hpp \
+  inc/sol/prologue.hpp inc/sol/epilogue.hpp \
+  inc/sol/detail/build_version.hpp inc/sol/forward.hpp \
+  inc/sol/forward_detail.hpp inc/sol/traits.hpp inc/sol/tuple.hpp \
+  inc/sol/base_traits.hpp inc/sol/bind_traits.hpp \
   inc/sol/pointer_like.hpp inc/sol/string_view.hpp inc/sol/assert.hpp \
   inc/sol/bytecode.hpp inc/sol/compatibility.hpp \
   inc/sol/compatibility/lua_version.hpp inc/lua/lua.h inc/lua/luaconf.h \
@@ -226,7 +227,7 @@ build/src/Scene.o: src/Scene.cpp src/../inc/Scene.hpp \
   inc/sol/userdata.hpp inc/sol/as_args.hpp inc/sol/variadic_args.hpp \
   inc/sol/variadic_results.hpp inc/sol/as_returns.hpp \
   src/../inc/Engine.hpp src/../inc/Backend.hpp src/../inc/Events.hpp \
-  src/../inc/LuaRuntime.hpp
+  src/../inc/LuaRuntime.hpp inc/Resources.hpp
 src/../inc/Scene.hpp:
 src/../inc/Entity.hpp:
 src/../inc/Components.hpp:
@@ -421,6 +422,7 @@ src/../inc/glm/vector_relational.hpp:
 src/../inc/glm/integer.hpp:
 src/../inc/glm/detail/func_integer.inl:
 src/../inc/Resources.hpp:
+inc/glm/glm.hpp:
 inc/sol/sol.hpp:
 inc/sol/version.hpp:
 inc/sol/config.hpp:
@@ -541,3 +543,4 @@ src/../inc/Engine.hpp:
 src/../inc/Backend.hpp:
 src/../inc/Events.hpp:
 src/../inc/LuaRuntime.hpp:
+inc/Resources.hpp:

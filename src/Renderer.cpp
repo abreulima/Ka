@@ -10,9 +10,13 @@
 #include "../inc/glm/gtc/matrix_transform.hpp"
 
 #include "../inc/Entity.hpp"
+#include "Resources.hpp"
+#include "glm/ext/matrix_transform.hpp"
 #include "glm/fwd.hpp"
 #include <cstdint>
 #include <iostream>
+#include <iterator>
+#include <memory>
 
 void Renderer::CreatePipeline(
     std::string name,
@@ -95,10 +99,7 @@ void Renderer::CreatePipeline(
    
    pipelines[name] = device.CreateRenderPipeline(&renderPipelineDescriptor);
    
-   SDL_free(shaderFile);
-   
-   
-   
+   SDL_free(shaderFile);  
 }
 
 void Renderer::ConfigureRenderer()
@@ -189,6 +190,98 @@ void Renderer::Init(
     ConfigureRenderer();
 }
 
+
+void Renderer::TextRenderer(std::shared_ptr<Entity> entity, glm::mat4 projection, glm::vec2 cameraOffset, wgpu::RenderPassEncoder pass)
+{
+
+
+    if (!entity->glyps.has_value())
+        return ;
+
+    pass.SetPipeline(*entity->pipeline);
+
+    pass.SetVertexBuffer(0, entity->vertexBuffer, 0, entity->vertexBuffer.GetSize());
+    pass.SetIndexBuffer(entity->indexBuffer, wgpu::IndexFormat::Uint16, 0, entity->indexBuffer.GetSize());
+
+    Uniforms::Material material;
+    material.color = entity->color;
+    material.uvRect = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f); 
+
+    queue.WriteBuffer(entity->uniformBuffers[1], 0, &material, sizeof(Uniforms::Material));
+    
+    const glm::vec2 renderPosition = glm::round(
+        entity->position - cameraOffset);
+    
+    float penX = 0.0f;
+
+    for (Glyph& glyph : entity->glyps.value())
+    {
+        glm::mat4 model(1.0f);
+
+        model = glm::translate(
+            model, 
+            glm::vec3(renderPosition, 0.0f)
+        );
+
+        model = glm::rotate(
+            model,
+            glm::radians(entity->rotation),
+            glm::vec3(0.0f, 0.0f, 1.0f)
+        );
+
+        model = glm::scale(
+            model, 
+            glm::vec3(entity->scale, 1.0f)
+        );
+
+        model = glm::translate(
+            model, 
+            glm::vec3(
+                -entity->anchorOffset * entity->textureSize,
+                0.0f
+            )
+        );
+
+        // Shift glyph
+        model = glm::translate(
+            model, glm::vec3(penX, 0.0f, 0.0f));
+
+        model = glm::scale(
+            model,
+            glm::vec3(
+                static_cast<float>(glyph.w),
+                static_cast<float>(glyph.h),
+                1.0f
+            )
+        );
+
+        Uniforms::PVM pvm;
+        pvm.projection = projection;
+        pvm.view = glm::mat4(1.0f);
+        pvm.model = model;
+
+        queue.WriteBuffer(
+            glyph.pvmBuffer, 0, &pvm, sizeof(Uniforms::PVM));
+
+        pass.SetBindGroup(
+            0,
+            glyph.bindGroup,
+            0,
+            nullptr
+        );
+
+        pass.DrawIndexed(
+            entity->indexBuffer.GetSize() / sizeof(uint16_t),
+            1,
+            0,
+            0
+        );
+
+        penX += static_cast<float>(glyph.advance);
+    }    
+}
+
+
 void Renderer::Render(std::vector<std::shared_ptr<Entity>>& entities, const glm::vec2& cameraPosition)
 {
     wgpu::TextureView targetView = GetCurrentTextureView();
@@ -228,13 +321,20 @@ void Renderer::Render(std::vector<std::shared_ptr<Entity>>& entities, const glm:
 
             // If offscreen, and not UI element, dont render.
             if (!SDL_HasRectIntersectionFloat(&entityRect, &screenRect) && 
-                entity->layer != LayerType::UI)
+                entity->layer != LayerType::UI &&
+                !entity->isFixed)
                 continue ;
             
             glm::vec2 cameraOffset = cameraPosition;
             
-            if (layer == LayerType::UI)
+            if (layer == LayerType::UI || entity->isFixed)
                 cameraOffset = glm::vec2(0.0f);
+
+            if (entity->glyps)
+            {
+                TextRenderer(entity, projection, cameraOffset, pass);
+                continue ;
+            }
             
             glm::mat4 model = glm::mat4(1.0f);
             glm::vec2 renderPosition = glm::round(entity->position - cameraOffset);

@@ -195,8 +195,8 @@ build/src/Renderer.o: src/Renderer.cpp src/../inc/Renderer.hpp \
   src/../inc/glm/gtc/../geometric.hpp \
   src/../inc/glm/gtc/../trigonometric.hpp \
   src/../inc/glm/gtc/../matrix.hpp src/../inc/Entity.hpp \
-  src/../inc/Components.hpp src/../inc/Resources.hpp inc/sol/sol.hpp \
-  inc/sol/version.hpp inc/sol/config.hpp inc/lua/lua.hpp \
+  src/../inc/Components.hpp src/../inc/Resources.hpp inc/glm/glm.hpp \
+  inc/sol/sol.hpp inc/sol/version.hpp inc/sol/config.hpp inc/lua/lua.hpp \
   inc/sol/prologue.hpp inc/sol/epilogue.hpp \
   inc/sol/detail/build_version.hpp inc/sol/forward.hpp \
   inc/sol/forward_detail.hpp inc/sol/traits.hpp inc/sol/tuple.hpp \
@@ -246,7 +246,8 @@ build/src/Renderer.o: src/Renderer.cpp src/../inc/Renderer.hpp \
   inc/sol/load_result.hpp inc/sol/state_handling.hpp \
   inc/sol/lua_value.hpp inc/sol/thread.hpp inc/sol/coroutine.hpp \
   inc/sol/userdata.hpp inc/sol/as_args.hpp inc/sol/variadic_args.hpp \
-  inc/sol/variadic_results.hpp inc/sol/as_returns.hpp inc/glm/fwd.hpp
+  inc/sol/variadic_results.hpp inc/sol/as_returns.hpp inc/Resources.hpp \
+  inc/glm/ext/matrix_transform.hpp inc/glm/fwd.hpp
 src/../inc/Renderer.hpp:
 src/../inc/glm/glm.hpp:
 src/../inc/glm/detail/_fixes.hpp:
@@ -465,6 +466,7 @@ src/../inc/glm/gtc/../matrix.hpp:
 src/../inc/Entity.hpp:
 src/../inc/Components.hpp:
 src/../inc/Resources.hpp:
+inc/glm/glm.hpp:
 inc/sol/sol.hpp:
 inc/sol/version.hpp:
 inc/sol/config.hpp:
@@ -581,4 +583,6 @@ inc/sol/as_args.hpp:
 inc/sol/variadic_args.hpp:
 inc/sol/variadic_results.hpp:
 inc/sol/as_returns.hpp:
+inc/Resources.hpp:
+inc/glm/ext/matrix_transform.hpp:
 inc/glm/fwd.hpp:

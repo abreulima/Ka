@@ -9,7 +9,6 @@
 #include <functional>
 #include <optional>
 
-#include "Renderer.hpp"
 #include "Resources.hpp"
 
 #include <sol/sol.hpp>
@@ -17,11 +16,14 @@
 #include <webgpu/webgpu_cpp.h>
 
 
+class Engine;
+
 class Entity
 {
     
     private:
     //bool isFlipped;
+    Engine& engine;
     
     public:
     std::string tag;
@@ -34,15 +36,23 @@ class Entity
     bool isFlipped;
     float rotation;
     bool isHovered = false;
+
+    bool isFixed = false;
+
+    std::optional<Image> line = std::nullopt;
+    std::optional<Image> rect = std::nullopt;
     
     std::optional<SDL_FRect> area;
     
     glm::vec2 anchorOffset;
     std::optional<std::string> url = std::nullopt;
 
-
+    Entity(Engine& engine) : engine(engine) {};
+    
     void LuaOnUpdate(float dt);
     
+    // Text Related
+    std::optional<std::vector<Glyph>> glyps = std::nullopt;
     
     std::vector<Components> components;    
 

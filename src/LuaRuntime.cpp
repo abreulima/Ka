@@ -3,6 +3,7 @@
 #include "../inc/Engine.hpp"
 #include <stdexcept>
 #include <string>
+#include <iostream>
 
 #include "../inc/Components.hpp"
 

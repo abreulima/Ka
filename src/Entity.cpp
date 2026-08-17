@@ -1,8 +1,13 @@
-#include "../inc/Entity.hpp"
+#include "Resources.hpp"
+#include <SDL3/SDL_pixels.h>
 #include <SDL3/SDL_rect.h>
 #include <optional>
 #include <type_traits>
 #include <vector>
+
+// Entity.cpp
+#include "../inc/Entity.hpp"
+#include "../inc/Engine.hpp"
 
 #include <iostream>
 
@@ -21,6 +26,8 @@ void Entity::PopulateComponents(const std::vector<Components>& components)
     anchorOffset = glm::vec2(0);
     std::optional<glm::vec4> area = std::nullopt;
     rotation = 0.0f;
+
+    //Image* line = nullptr;
     
     this->components = components;
     
@@ -46,7 +53,34 @@ void Entity::PopulateComponents(const std::vector<Components>& components)
             {
                 this->sprite = c.name;
             }
+
+            else if constexpr (std::is_same_v<T, Fixed>)
+            {
+                this->isFixed = true;
+            }
+
+            else if constexpr (std::is_same_v<T, Text>)
+            {
+                glyps = engine.resources.CreateTextGlyphs(
+                    c.content,
+                    c.font, 
+                    c.color
+                );
+
+                
+                
+            }
             
+            else if constexpr (std::is_same_v<T, Line>)
+            {
+                line = this->engine.resources.CreateLine(c.start, c.end, c.color); 
+            }
+
+            else if constexpr (std::is_same_v<T, Rect>)
+            {
+                rect = this->engine.resources.CreateRectangle(c.w, c.h, SDL_Color{255, 0, 0, 255});
+            }
+
             else if constexpr (std::is_same_v<T, Scale>)
             {
                 this->scale = glm::vec2(c.x, c.y);
@@ -141,6 +175,7 @@ SDL_FRect Entity::GetPositionRect()
     // Collision Area isn't the same as sprite area
     if (this->area)
     {
+        
         return SDL_FRect{
             spriteTopleft.x + area->x * scale.x,
             spriteTopleft.y + area->y * scale.y,

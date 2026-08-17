@@ -1,6 +1,7 @@
 #ifndef BACKEND_HPP
 #define BACKEND_HPP
 
+#include <SDL3/SDL_gamepad.h>
 #include <webgpu/webgpu_cpp.h>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_keyboard.h>
@@ -23,6 +24,7 @@ public:
     // SDL
     SDL_Window *window;
     SDL_Event events;
+    SDL_Gamepad* gamepad = nullptr;
     
     void Init();
     

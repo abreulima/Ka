@@ -2,7 +2,10 @@
 #include "../inc/Backend.hpp"
 #include "../inc/LuaRuntime.hpp"
 
+#include <SDL3/SDL_error.h>
 #include <SDL3/SDL_events.h>
+#include <SDL3/SDL_gamepad.h>
+#include <SDL3/SDL_joystick.h>
 #include <SDL3/SDL_mouse.h>
 #include <SDL3/SDL_rect.h>
 #include <SDL3/SDL_scancode.h>
@@ -54,12 +57,40 @@ void Engine::Update()
                 isRunning = false;
         }
         
-        
         if (backend.GetEvents().type == SDL_EVENT_MOUSE_BUTTON_DOWN &&
             backend.GetEvents().button.button == SDL_BUTTON_LEFT)
         {
             isMouseLeftClicked = true;
         }
+
+        // Gamepadd added
+        if (backend.GetEvents().type == SDL_EVENT_GAMEPAD_ADDED)
+        {
+            if(!backend.gamepad)
+            {
+                backend.gamepad = SDL_OpenGamepad(backend.GetEvents().gdevice.which);
+                if (!backend.gamepad)
+                {
+                    std::cout << "Failed to open gamepad!" << SDL_GetError();
+                }
+                else 
+                {
+                    std::cout << SDL_GetGamepadName(backend.gamepad) << std::endl;
+                }
+            }
+        }
+
+        // Gamepadd removed
+        if (backend.GetEvents().type == SDL_EVENT_GAMEPAD_REMOVED)
+        {
+            if (backend.gamepad && (SDL_GetGamepadID(backend.gamepad)) == backend.events.gdevice.which)
+            {
+                SDL_CloseGamepad(backend.gamepad);
+                backend.gamepad = nullptr;
+            }
+        }
+        
+
         
         //if (backend.GetEvents().type == SDL_EVENT_MOUSE_BUTTON_DOWN &&
         //    backend.GetEvents().button.button == SDL_BUTTON_LEFT)

@@ -69,6 +69,8 @@ class Renderer
         void ConfigureRenderer();
         
         void Render(std::vector<std::shared_ptr<Entity>>& entities, const glm::vec2& cameraPosition);
+        void TextRenderer(std::shared_ptr<Entity> entity, glm::mat4 projection, glm::vec2 cameraOffset, wgpu::RenderPassEncoder pass);
+
         
         void CreatePipeline(
             std::string name, 
