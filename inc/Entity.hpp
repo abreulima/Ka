@@ -11,7 +11,7 @@
 
 #include "Resources.hpp"
 
-#include <sol/sol.hpp>
+//#include <sol/sol.hpp>
 
 #include <webgpu/webgpu_cpp.h>
 
@@ -20,11 +20,11 @@ class Engine;
 
 class Entity
 {
-    
+
     private:
     //bool isFlipped;
     Engine& engine;
-    
+
     public:
     std::string tag;
     bool isActive;
@@ -41,20 +41,20 @@ class Entity
 
     std::optional<Image> line = std::nullopt;
     std::optional<Image> rect = std::nullopt;
-    
+
     std::optional<SDL_FRect> area;
-    
+
     glm::vec2 anchorOffset;
     std::optional<std::string> url = std::nullopt;
 
     Entity(Engine& engine) : engine(engine) {};
-    
-    void LuaOnUpdate(float dt);
-    
+
+    //void LuaOnUpdate(float dt);
+
     // Text Related
     std::optional<std::vector<Glyph>> glyps = std::nullopt;
-    
-    std::vector<Components> components;    
+
+    std::vector<Components> components;
 
     // C++ Callbacks
     std::optional<std::function<void(float)>> onUpdate = std::nullopt;
@@ -62,12 +62,12 @@ class Entity
     std::optional<std::function<float(void)>> onRender = std::nullopt;
 
     // Lua Callbacks
-    sol::protected_function luaOnUpdate;
+    //sol::protected_function luaOnUpdate;
 
-    
+
     //std::function<void(Entity&, float)> onUpdateLua;
     //std::function<void(Entity&)> onClickLua;
-    
+
     // Button Related
     std::optional<std::function<void(void)>> onClick = std::nullopt;
     std::optional<std::function<void(void)>> onHover = std::nullopt;
@@ -76,20 +76,20 @@ class Entity
     wgpu::RenderPipeline* pipeline = nullptr;
     wgpu::Buffer vertexBuffer;
     wgpu::Buffer indexBuffer;
-    
+
     std::vector<wgpu::Buffer> uniformBuffers;
-    
+
     wgpu::BindGroup bindGroup;
-    
+
     glm::vec2 position;
     glm::vec4 color = {255, 255, 255, 255};
-    
+
     void PopulateComponents(const std::vector<Components>& components);
-    
+
     // Methods
     void Flip(bool state);
     SDL_FRect GetPositionRect();
-    
+
     template <typename T>
     T* GetComponent()
     {
@@ -106,15 +106,15 @@ class Entity
     T* GetData(const std::string& key)
     {
         auto* data = GetComponent<Data>();
-        
+
         if (!data)
             return nullptr;
-        
+
         auto it = data->values.find(key);
-        
+
         if (it == data->values.end())
             return nullptr;
-        
+
         return std::any_cast<T>(&it->second);
     }
     */

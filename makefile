@@ -1,9 +1,9 @@
-CXX			:= clang++
-EMXX		:= em++
+CXX			= clang++
+EMXX		= em++
 
-NAME		:= game
+NAME		= game
 
-SRCS		:= \
+SRCS		= \
 			main.cpp \
 			src/Scene.cpp \
 			src/Entity.cpp \
@@ -14,13 +14,13 @@ SRCS		:= \
 			src/Events.cpp \
 			src/LuaRuntime.cpp
 
-BUILDIR		:= build
-OBJS		:= $(SRCS:%.cpp=$(BUILDIR)/%.o)
-DEPS		:= $(SRCS:%.cpp=$(BUILDIR)/%.d)
+BUILDIR		= build
+OBJS		= $(SRCS:%.cpp=$(BUILDIR)/%.o)
+DEPS		= $(SRCS:%.cpp=$(BUILDIR)/%.d)
 
-CPPFLAGS	:= -Iinc -Iinc/lua
-CXXFLAGS	:= -std=c++23 -O3 -g -Wall -Wextra -Wpedantic -MMD -MP
-LDLIBS		:= -lwebgpu_dawn -lSDL3 -lSDL3_ttf -lSDL3_image -llua5.4
+CPPFLAGS	= -Iinc -Iinc/lua
+CXXFLAGS	= -std=c++23 -O3 -g -Wall -Wextra -Wpedantic -MMD -MP
+LDLIBS		= -lwebgpu_dawn -lSDL3 -lSDL3_ttf -lSDL3_image -llua5.4
 
 .PHONY: 	all web run clean
 
@@ -33,7 +33,7 @@ $(NAME): $(OBJS)
 $(BUILDIR)/%.o: %.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -MMD -MP -MF $(BUILDIR)/$*.d -c $< -o $@
-	
+
 web: $(SRCS)
 	em++ -g $(SRCS) -sASYNCIFY=1 --use-port=sdl3 --use-port=emdawnwebgpu -sALLOW_MEMORY_GROWTH=1 --preload-file res -o out/web/index.html
 

@@ -1,0 +1,30 @@
+CXX     = cl
+NAME    = out\win\game.exe
+
+SRCS    = \
+        main.cpp \
+        src\Backend.cpp \
+        src\Engine.cpp \
+        src\Entity.cpp \
+        src\Events.cpp \
+        src\Renderer.cpp \
+        src\Resources.cpp \
+        src\Scene.cpp
+
+VCPKG = C:\vcpkg
+TRIPLET = x64-windows
+
+CXXFLAGS = /std:c++latest /Od /W4 /EHsc \
+           /Iinc \
+           /Iinc\lua \
+           /I"$(VCPKG)\installed\$(TRIPLET)\include"
+
+LIBPATH = /LIBPATH:"$(VCPKG)\installed\$(TRIPLET)\lib"
+
+LIBS    = webgpu_dawn.lib SDL3.lib SDL3_ttf.lib
+
+all:
+    $(CXX) $(SRCS) $(CXXFLAGS) /Fe:$(NAME) /link $(LIBPATH) $(LIBS) /DEBUG
+
+run: all
+    out\win\game.exe

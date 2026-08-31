@@ -2,7 +2,7 @@
 #define LUA_RUNTIME_HPP
 
 #include "Components.hpp"
-#include <sol/sol.hpp>
+//#include <sol/sol.hpp>
 
 #include "Scene.hpp"
 
@@ -20,7 +20,7 @@ class LuaRuntime{
         void LoadScene(const std::string& path, Scene& scene);
         std::vector<Components> ParseComponents(const sol::table& values);
     private:
-        sol::state lua;
+        //sol::state lua;
         Engine* engine = nullptr;
 };
 
