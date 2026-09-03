@@ -25,7 +25,7 @@ struct Font {
 
 struct Glyph {
     Image image;
-    
+
     int h;
     int w;
 
@@ -33,12 +33,12 @@ struct Glyph {
     int maxx;
     int miny;
     int maxy;
-    
+
     int advance;
 
     wgpu::Buffer pvmBuffer;
     wgpu::BindGroup bindGroup;
-    
+
 };
 
 
@@ -52,21 +52,25 @@ class Resources
 
         Image CreateImageFromSDLsurface(SDL_Surface& surface);
         Image CreateImage(std::vector<uint8_t> pixels, int w, int h);
-        
+
     public:
         void Init(wgpu::Device, wgpu::Queue queue);
+
         Image LoadImage(std::string name, std::string path);
         Image& GetImage(std::string name);
+
+        Image CreateRectFromImage(const Image& image, std::string name, glm::ivec4 rect);
+
         Image CreateLine(glm::vec2 start, glm::vec2 end, SDL_Color color);
         Image CreateRectangle(int w, int h, SDL_Color color);
 
-        // 
+        //
         Font LoadFont(std::string name, std::string path, uint8_t size);
         Font& GetFont(std::string name);
 
         std::vector<Glyph> CreateTextGlyphs(const std::string& content, const std::string& fontName, SDL_Color color);
-    
-        
+
+
 };
 
 #endif

@@ -199,36 +199,200 @@ int main()
     Engine engine = Engine();
     engine.Start();
 
-    // Game Logic
+    // External Logic
 
-    Image tiles = engine.resources.LoadImage("tiles", "isometric.png");
-    engine.resources.CreateRectFromImage(tiles, "teste", {0, 0, 64, 48});
-    engine.resources.LoadImage("grass-tile", "grass_tile.png");
+    engine.resources.LoadImage("Milk", "milk.png");
+    engine.resources.LoadImage("checker", "full-checker.png");
+    engine.resources.LoadImage("platform", "platform.png");
+    engine.resources.LoadImage("slime", "slime-2.png");
+    engine.resources.LoadImage("grass", "grass.png");
+    engine.resources.LoadImage("grass-bot", "grass-bot.png");
+    engine.resources.LoadImage("grass-right", "grass-right.png");
+    engine.resources.LoadImage("grass-left", "grass-left.png");
+    engine.resources.LoadImage("grass-right-middle", "grass-right-middle.png");
+    engine.resources.LoadImage("grass-left-middle", "grass-left-middle.png");
+
+    engine.resources.LoadFont("monogram", "res/fonts/monogram-extended.ttf", 16);
+
+    //engine.luaRuntime.LoadScript("_game/ASTRID_01/scripts/main.lua");
 
     Scene scene = Scene(engine);
 
-    glm::mat2 transform = glm::mat2(
-        glm::vec2(1 * (32/2.0), 0.5 * (23/2.0)),
-        glm::vec2(-1 * (32/2.0), 0.5 * (23/2.0))
-    );
+    scene.Add({
+        Sprite{"checker"},
+        Position{0, 0},
+        Scale{2}
+    });
 
-    for (int i = 0; i < 10; i++)
+    auto& enemy = scene.Add({
+        Sprite{"Milk"},
+        Position{200, 300},
+        Scale{2, 2}
+    });
+
+    auto& player = scene.Add({
+        Sprite{"slime"},
+        Position{0, 38},
+        Scale{2, 2},
+        Area{ .shape = {0, 0, 0, 0}},
+        Platformer{},
+    });
+
+    scene.Add({
+        Sprite{"Milk"},
+        Position{0, 0},
+        Scale{2, 2},
+        Layer{LayerType::UI}
+    });
+
+    scene.Add({
+        Sprite{"grass-left"},
+        Position{0, 300},
+        Scale{2}
+    });
+
+    scene.Add({
+        Sprite{"grass-left-middle"},
+        Position{0, 332},
+        Scale{2}
+    });
+
+    scene.Add({
+        Sprite{"grass-right"},
+        Position{51 * 32, 300},
+        Scale{2}
+    });
+
+    scene.Add({
+        Sprite{"grass-right-middle"},
+        Position{51* 32, 332},
+        Scale{2}
+    });
+
+
+    scene.Add({
+        Position{0, 0},
+        //Sprite{"Milk"},
+        Line{glm::vec2(0, 0), glm::vec2(100, 100)},
+        //Fixed{},
+        //Scale{2}
+    });
+
+    scene.Add({
+        Position{WIDTH / 2, HEIGHT / 2},
+        Rect{32 * 4, 32 * 4},
+        //Fixed{},
+    });
+
+    scene.Add({
+        Position{100, 100},
+        Text("Please, subscribe!"),
+        Layer{LayerType::FG},
+        Scale{3}
+    });
+
+
+    for (int i = 0 ; i < 50; i++)
     {
-        for (int j = 0; j < 10; j++)
-        {
-            glm::vec2 res = transform * glm::vec2(i, j);
-            scene.Add({
-                Sprite{"grass-tile"},
-                Position{(int)res.x, (int)res.y},
-                //Scale{2}
-            });
-        }
+        scene.Add({
+            Sprite{"grass"},
+            Position{32 + i * 32, 300},
+            Scale{2}
+        });
+
+        scene.Add({
+            Sprite{"grass-bot"},
+            Position{32 + i * 32, 332},
+            Scale{2}
+        });
 
     }
 
-    // End of Game Logic
+    enemy.onUpdate = [&enemy](float dt){
+        enemy.position.x = enemy.position.x + 80*dt;
+
+    };
+
+    float groundY = 300.0f - 64;
+
+    player.onUpdate = [&engine, &player, groundY](float dt){
+
+        SDL_Gamepad* gamepad = engine.backend.gamepad;
+
+        auto platformer = player.GetComponent<Platformer>();
+        if (!platformer) return ;
+
+        if (
+            engine.events.IsKeyDown(SDL_SCANCODE_LEFT) ||
+            engine.events.IsButtonDown(gamepad, SDL_GAMEPAD_BUTTON_DPAD_LEFT) ||
+            engine.events.GetAxisValue(gamepad, SDL_GAMEPAD_AXIS_LEFTX) > 0.2f
+        )
+        {
+            platformer->velocity.x = -platformer->moveSpeed;
+            player.Flip(true);
+        }
+        else if (
+            engine.events.IsKeyDown(SDL_SCANCODE_RIGHT) ||
+            engine.events.IsButtonDown(gamepad, SDL_GAMEPAD_BUTTON_DPAD_RIGHT) ||
+            engine.events.GetAxisValue(gamepad, SDL_GAMEPAD_AXIS_LEFTX) > 0.2f
+        )
+        {
+            platformer->velocity.x = +platformer->moveSpeed;
+            player.Flip(false);
+        }
+        else
+            platformer->velocity.x = 0;
+
+
+        if (
+            (
+                engine.events.IsKeyDown(SDL_SCANCODE_SPACE) ||
+                engine.events.IsButtonDown(gamepad, SDL_GAMEPAD_BUTTON_SOUTH)
+            )
+            && platformer->isGrounded)
+        {
+            platformer->velocity.y = -platformer->jumpSpeed;
+            platformer->isGrounded = false;
+        }
+
+        platformer->velocity.y += platformer->gravity * dt;
+        player.position += platformer->velocity * dt;
+
+
+        SDL_FRect playerRect = player.GetPositionRect();
+
+        if (playerRect.y + playerRect.h >= groundY)
+        {
+            player.position.y = groundY - playerRect.h;
+            platformer->velocity.y = 0;
+            platformer->isGrounded = true;
+        }
+        else {
+            platformer->isGrounded = false;
+        }
+
+        engine.camera.position = player.position - glm::vec2(WIDTH / 2.0f, HEIGHT / 2.0f);
+
+    };
+
+    //player.
+
+
+
+
+    //engine.luaRuntime.LoadScene("_game/ASTRID_01/scripts/main.lua", scene);
+
+
+    /*
+        scene.Add({
+        Sprite{"Milk"},
+        Position{100, 100}
+    });
+    */
 
     engine.scenes.emplace("main", std::move(scene));
+
+    // End
 
     #ifdef __EMSCRIPTEN__
 

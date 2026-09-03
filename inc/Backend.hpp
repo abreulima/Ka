@@ -20,6 +20,7 @@ public:
     wgpu::Surface surface;
     wgpu::Adapter adapter;
     wgpu::TextureFormat format;
+    wgpu::CommandEncoder enconder;
 
     // SDL
     SDL_Window *window;
@@ -36,6 +37,7 @@ public:
     wgpu::Queue GetQueue();
     SDL_Event& GetEvents();
     wgpu::TextureFormat GetFormat();
+    wgpu::CommandEncoder GetCommandEncoder();
 
     wgpu::Adapter RequestAdapter();
     wgpu::Device RequestDevice();
