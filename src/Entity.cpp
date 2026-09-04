@@ -24,7 +24,7 @@ void Entity::PopulateComponents(const std::vector<Components>& components)
     url = std::nullopt;
     isFlipped = false;
     anchorOffset = glm::vec2(0);
-    std::optional<glm::vec4> area = std::nullopt;
+    //std::optional<glm::vec4> area = std::nullopt;
     rotation = 0.0f;
 
     //Image* line = nullptr;
@@ -116,44 +116,6 @@ void Entity::PopulateComponents(const std::vector<Components>& components)
                         this->anchorOffset = glm::vec2(0);
                         break ;
                 }
-            }
-
-            else if constexpr (std::is_same_v<T, Area>)
-            {
-
-                float x = c.shape.x;
-                float y = c.shape.y;
-
-                float w = c.shape.z;
-                float h = c.shape.w;
-
-                if (w == 0 && h == 0)
-                {
-                    w = textureSize.x;
-                    h = textureSize.y;
-                };
-
-                /*
-                this->area = SDL_FRect{
-                    .x = position.x + x,
-                    .y = position.y + y,
-                    .w = w * scale.x,
-                    .h = h * scale.y
-                };
-                */
-
-                this->area = SDL_FRect{
-                    .x = x,
-                    .y = y,
-                    .w = w,
-                    .h = h
-                };
-
-                std::cout << this->tag << std::endl;
-                std::cout << "x: " << this->area->x << " " << std::endl;
-                std::cout << "y: " <<this->area->y << " " << std::endl;
-                std::cout << "w: " << this->area->w << " " << std::endl;
-                std::cout << "h: " << this->area->h << " " << std::endl;
             }
 
 

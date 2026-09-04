@@ -59,7 +59,7 @@ Image Resources::LoadImage(std::string name, std::string path)
     textureDesc.size = {(uint32_t)w, (uint32_t)h, 1};
     textureDesc.mipLevelCount = 1;
     textureDesc.sampleCount = 1;
-    textureDesc.format = wgpu::TextureFormat::RGBA8Unorm;
+    textureDesc.format = wgpu::TextureFormat::RGBA8UnormSrgb;
     textureDesc.usage = wgpu::TextureUsage::TextureBinding | wgpu::TextureUsage::CopyDst | wgpu::TextureUsage::CopySrc;
     textureDesc.viewFormatCount = 0;
 
@@ -127,7 +127,7 @@ Image Resources::CreateLine(glm::vec2 start, glm::vec2 end, SDL_Color color)
     textureDesc.size = {(uint32_t)w, (uint32_t)h, 1};
     textureDesc.mipLevelCount = 1;
     textureDesc.sampleCount = 1;
-    textureDesc.format = wgpu::TextureFormat::RGBA8Unorm;
+    textureDesc.format = wgpu::TextureFormat::RGBA8UnormSrgb;
     textureDesc.usage = wgpu::TextureUsage::TextureBinding | wgpu::TextureUsage::CopyDst;
     textureDesc.viewFormatCount = 0;
 
@@ -221,7 +221,7 @@ Image Resources::CreateRectFromImage(const Image& image, std::string name, glm::
     textureDesc.size = {width, height, 1};     // Size of dest.
     textureDesc.mipLevelCount = 1;
     textureDesc.sampleCount = 1;
-    textureDesc.format = wgpu::TextureFormat::RGBA8Unorm;
+    textureDesc.format = wgpu::TextureFormat::RGBA8UnormSrgb;
     textureDesc.usage = wgpu::TextureUsage::CopyDst | wgpu::TextureUsage::TextureBinding | wgpu::TextureUsage::CopySrc;
 
     wgpu::Texture textureDestination = device.CreateTexture(&textureDesc);
@@ -256,7 +256,7 @@ Image Resources::CreateRectFromImage(const Image& image, std::string name, glm::
     textureViewDesc.baseMipLevel = 0;
     textureViewDesc.mipLevelCount = 1;
     textureViewDesc.dimension = wgpu::TextureViewDimension::e2D;
-    textureViewDesc.format = wgpu::TextureFormat::RGBA8Unorm;
+    textureViewDesc.format = wgpu::TextureFormat::RGBA8UnormSrgb;
 
     // Sampler
     wgpu::SamplerDescriptor samplerDesc = {};
@@ -293,7 +293,7 @@ Image Resources::CreateRectangle(int w, int h, SDL_Color color)
     textureDesc.size = {(uint32_t)w, (uint32_t)h, 1};
     textureDesc.mipLevelCount = 1;
     textureDesc.sampleCount = 1;
-    textureDesc.format = wgpu::TextureFormat::RGBA8Unorm;
+    textureDesc.format = wgpu::TextureFormat::RGBA8UnormSrgb;
     textureDesc.usage = wgpu::TextureUsage::TextureBinding | wgpu::TextureUsage::CopyDst;
     textureDesc.viewFormatCount = 0;
 
@@ -488,7 +488,7 @@ Image Resources::CreateImage(std::vector<uint8_t> pixels, int w, int h)
     textureDesc.size = {(uint32_t)w, (uint32_t)h, 1};
     textureDesc.mipLevelCount = 1;
     textureDesc.sampleCount = 1;
-    textureDesc.format = wgpu::TextureFormat::RGBA8Unorm;
+    textureDesc.format = wgpu::TextureFormat::RGBA8UnormSrgb;
     textureDesc.usage = wgpu::TextureUsage::TextureBinding | wgpu::TextureUsage::CopyDst;
     textureDesc.viewFormatCount = 0;
 

@@ -1,13 +1,17 @@
 #include "Backend.hpp"
+#include "glm/trigonometric.hpp"
 #include "inc/Components.hpp"
 #include "inc/Engine.hpp"
 #include "inc/Renderer.hpp"
 #include "inc/Scene.hpp"
 
+#include <iostream>
 #include <SDL3/SDL_gamepad.h>
 #include <SDL3/SDL_misc.h>
 #include <SDL3/SDL_rect.h>
 #include <SDL3/SDL_scancode.h>
+#include <cstdint>
+#include <cstdlib>
 
 #ifdef __EMSCRIPTEN__
     #include <emscripten/emscripten.h>
@@ -202,26 +206,77 @@ int main()
     // Game Logic
 
     Image tiles = engine.resources.LoadImage("tiles", "isometric.png");
-    engine.resources.CreateRectFromImage(tiles, "teste", {0, 0, 64, 48});
+    engine.resources.CreateRectFromImage(tiles, "grass", {0, 0, 64, 48});
+    engine.resources.CreateRectFromImage(tiles, "lava", {63, 0, 64, 48});
+    engine.resources.CreateRectFromImage(tiles, "brick", {128, 96, 64, 48});
+    engine.resources.CreateRectFromImage(tiles, "sand", {0, 144, 64, 48});
+    engine.resources.CreateRectFromImage(tiles, "marble", {128, 144, 64, 48});
+
     engine.resources.LoadImage("grass-tile", "grass_tile.png");
 
     Scene scene = Scene(engine);
 
+    float scale = 2.0f;
     glm::mat2 transform = glm::mat2(
-        glm::vec2(1 * (32/2.0), 0.5 * (23/2.0)),
-        glm::vec2(-1 * (32/2.0), 0.5 * (23/2.0))
+        //glm::vec2(1 * (32/2.0), 0.5 * (23/2.0)),
+        //glm::vec2(-1 * (32/2.0), 0.5 * (23/2.0))
+        glm::vec2(16.0f, 8.0) * scale,
+        glm::vec2(-16.0f, 8.0f) * scale
+
     );
 
+    
+    auto& teste = scene.Add({
+        Sprite{"grass"},
+        Position{300, 300},
+        Scale{(int)scale}   
+    });
+
+    teste.onUpdate = [&engine](float dt){
+        //std::cout << "Hello World!" << std::endl;
+    };
+    
+
+    
     for (int i = 0; i < 10; i++)
     {
         for (int j = 0; j < 10; j++)
         {
+
+            std::vector<std::string> tiles{"grass", "lava", "brick", "sand", "marble"};
+            int index = rand() % tiles.size();
+            std::string value = tiles[index];
+
+            //int noise = rand() % 8
+            
             glm::vec2 res = transform * glm::vec2(i, j);
-            scene.Add({
-                Sprite{"grass-tile"},
-                Position{(int)res.x, (int)res.y},
-                //Scale{2}
+
+            auto& tile = scene.Add({
+                Sprite{value},
+                Position{
+                    res.x - (64.0f * scale)/2.0f, 
+                    res.y
+                },
+                Scale{(int)scale}
             });
+
+            float baseY = res.y;
+            float phase = (i + j) * 0.3f;
+
+            if (i == 9 && j == 0)
+            {
+                    
+                tile.onUpdate = [&engine, &tile, baseY, phase](float dt) {
+        
+                    float speed = 0.5f;
+                    float amplitude = 3.0f;
+        
+                    std::cout << tile.position.y << '\n';
+                    
+                    tile.position.y = baseY + glm::sin(engine.time * speed + phase) * amplitude;  
+                };
+            }
+            
         }
 
     }

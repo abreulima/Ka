@@ -10,7 +10,7 @@
 #include "Renderer.hpp"
 #include "glm/fwd.hpp"
 
-struct Position { int x; int y; };
+struct Position { float x; float y; };
 struct Tag { std::string name; };
 struct Sprite { std::string name; };
 struct Fixed {};

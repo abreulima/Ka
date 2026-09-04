@@ -232,6 +232,20 @@ void Backend::ConfigureSurface()
     this->surface.GetCapabilities(this->adapter, &surfaceCap);
     this->format = surfaceCap.formats[0];
 
+    for (size_t i = 0; i < surfaceCap.formatCount; i++)
+    {
+        auto candidate = surfaceCap.formats[i];
+
+        if (candidate == wgpu::TextureFormat::RGBA8UnormSrgb || 
+            candidate == wgpu::TextureFormat::BGRA8UnormSrgb)
+        {
+            
+            this->format = candidate;
+            break;
+        }
+    }
+    
+
     wgpu::SurfaceConfiguration surfaceConfig = {};
     surfaceConfig.nextInChain = nullptr;
     surfaceConfig.width = WIDTH;

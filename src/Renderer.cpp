@@ -209,8 +209,8 @@ void Renderer::TextRenderer(std::shared_ptr<Entity> entity, glm::mat4 projection
 
     queue.WriteBuffer(entity->uniformBuffers[1], 0, &material, sizeof(Uniforms::Material));
 
-    const glm::vec2 renderPosition = glm::round(
-        entity->position - cameraOffset);
+    //const glm::vec2 renderPosition = glm::round(entity->position - cameraOffset);
+    const glm::vec2 renderPosition = entity->position - cameraOffset;
 
     float penX = 0.0f;
 
@@ -339,7 +339,8 @@ void Renderer::Render(std::vector<std::shared_ptr<Entity>>& entities, const glm:
             }
 
             glm::mat4 model = glm::mat4(1.0f);
-            glm::vec2 renderPosition = glm::round(entity->position - cameraOffset);
+            //glm::vec2 renderPosition = glm::round(entity->position - cameraOffset);
+            glm::vec2 renderPosition = entity->position - cameraOffset;
             //renderPosition = entity->position;
 
             model = glm::translate(model, glm::vec3(renderPosition, 0.0f));

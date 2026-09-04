@@ -157,7 +157,8 @@ build/src/Resources.o: src/Resources.cpp src/../inc/Resources.hpp \
   inc/glm/detail/func_packing.inl inc/glm/detail/../common.hpp \
   inc/glm/detail/type_half.hpp inc/glm/detail/type_half.inl \
   inc/glm/geometric.hpp inc/glm/matrix.hpp inc/glm/vector_relational.hpp \
-  inc/glm/integer.hpp inc/glm/detail/func_integer.inl
+  inc/glm/integer.hpp inc/glm/detail/func_integer.inl \
+  inc/glm/ext/vector_float2.hpp inc/glm/ext/vector_int4.hpp
 src/../inc/Resources.hpp:
 inc/glm/glm.hpp:
 inc/glm/detail/_fixes.hpp:
@@ -348,3 +349,5 @@ inc/glm/matrix.hpp:
 inc/glm/vector_relational.hpp:
 inc/glm/integer.hpp:
 inc/glm/detail/func_integer.inl:
+inc/glm/ext/vector_float2.hpp:
+inc/glm/ext/vector_int4.hpp:

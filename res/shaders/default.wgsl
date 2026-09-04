@@ -41,10 +41,13 @@ fn vs_main(in: VertexInput) -> VertexOuput
 @fragment
 fn fs_main(in: VertexOuput) ->@location(0) vec4f
 {
-	let color = textureSample(texture, textureSampler, in.uv).rgba;
+	let color = textureSample(texture, textureSampler, in.uv);
 
+	// 
+	let linear_color = color.rgb * material.color.rgb;
+	
 	// Game Correction
-	//let corrected_color = pow(color.rgb * material.color.rgb, vec3f(2.2));
+	//let corrected_color = pow(linear_color, vec3f(1.0 / 2.2));
 
-	return vec4f(color.rgb, color.a);
+	return vec4f(linear_color, color.a);
 }

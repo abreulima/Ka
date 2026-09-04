@@ -122,6 +122,7 @@ void Engine::Update()
         if (e->onUpdate)
             e->onUpdate.value()(dt);
 
+        //std::cout << "ups" << std::endl;
         // Forgotten for now
         //e->LuaOnUpdate(dt);
 

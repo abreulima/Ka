@@ -12,7 +12,6 @@ SRCS		= \
 			src/Resources.cpp \
 			src/Renderer.cpp \
 			src/Events.cpp \
-			src/LuaRuntime.cpp
 
 BUILDIR		= build
 OBJS		= $(SRCS:%.cpp=$(BUILDIR)/%.o)
