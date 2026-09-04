@@ -225,22 +225,9 @@ int main()
 
     );
 
-    
-    auto& teste = scene.Add({
-        Sprite{"grass"},
-        Position{300, 300},
-        Scale{(int)scale}   
-    });
-
-    teste.onUpdate = [&engine](float dt){
-        //std::cout << "Hello World!" << std::endl;
-    };
-    
-
-    
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 15; i++)
     {
-        for (int j = 0; j < 10; j++)
+        for (int j = 0; j < 15; j++)
         {
 
             std::vector<std::string> tiles{"grass", "lava", "brick", "sand", "marble"};
@@ -248,13 +235,13 @@ int main()
             std::string value = tiles[index];
 
             //int noise = rand() % 8
-            
+
             glm::vec2 res = transform * glm::vec2(i, j);
 
             auto& tile = scene.Add({
                 Sprite{value},
                 Position{
-                    res.x - (64.0f * scale)/2.0f, 
+                    res.x - (64.0f * scale)/2.0f + (15 / 2.0f)* 64,
                     res.y
                 },
                 Scale{(int)scale}
@@ -262,21 +249,21 @@ int main()
 
             float baseY = res.y;
             float phase = (i + j) * 0.3f;
-
-            if (i == 9 && j == 0)
+            //float phase = 0.0f;
+            //if (i == 9 && j == 0)
             {
-                    
+
                 tile.onUpdate = [&engine, &tile, baseY, phase](float dt) {
-        
-                    float speed = 0.5f;
-                    float amplitude = 3.0f;
-        
-                    std::cout << tile.position.y << '\n';
-                    
-                    tile.position.y = baseY + glm::sin(engine.time * speed + phase) * amplitude;  
+
+                    float speed = 1.5f;
+                    float amplitude = 16.0f;
+
+                    //std::cout << tile.position.y << '\n';
+
+                    tile.position.y = baseY + glm::sin(engine.time * speed + phase) * amplitude;
                 };
             }
-            
+
         }
 
     }

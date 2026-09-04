@@ -236,15 +236,15 @@ void Backend::ConfigureSurface()
     {
         auto candidate = surfaceCap.formats[i];
 
-        if (candidate == wgpu::TextureFormat::RGBA8UnormSrgb || 
+        if (candidate == wgpu::TextureFormat::RGBA8UnormSrgb ||
             candidate == wgpu::TextureFormat::BGRA8UnormSrgb)
         {
-            
+
             this->format = candidate;
             break;
         }
     }
-    
+
 
     wgpu::SurfaceConfiguration surfaceConfig = {};
     surfaceConfig.nextInChain = nullptr;
@@ -256,6 +256,7 @@ void Backend::ConfigureSurface()
     surfaceConfig.viewFormatCount = 0;
     surfaceConfig.viewFormats = nullptr;
     surfaceConfig.device = this->device;
+    surfaceConfig.presentMode = wgpu::PresentMode::Fifo;
     surface.Configure(&surfaceConfig);
 }
 
