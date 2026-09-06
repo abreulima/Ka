@@ -1,4 +1,5 @@
 #include "../inc/Scene.hpp"
+#include <complex>
 #include <cstdint>
 #include <cstdlib>
 #include <memory>
@@ -159,7 +160,24 @@ Entity& Scene::Add(const std::vector<Components> &components)
         exit(1);
     }
 
-    entity->textureSize = glm::vec2(image->w, image->h);
+    if (entity->isAnimated)
+    {
+        glm::vec2 textureSize = glm::vec2(image->w, image->h);
+        entity->spriteSize = glm::vec2(image->w, image->h);
+        
+        // Convert pixels to [0, 1]
+        entity->normalizedFrameSize = glm::vec2(
+            entity->animationSize / textureSize
+        );
+        
+        entity->textureSize = entity->animationSize;
+    }
+    else
+    {
+        entity->textureSize = glm::vec2(image->w, image->h); 
+    }
+    
+        
     entity->bindGroup = createBindGroup(*image, entity->uniformBuffers[0]);
     
     entities.push_back(entity);

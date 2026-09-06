@@ -24,7 +24,7 @@ void Backend::Init()
 {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD);
     TTF_Init();
-
+   
     keys = SDL_GetKeyboardState(nullptr);
 
     window = SDL_CreateWindow(
@@ -41,6 +41,23 @@ void Backend::Init()
         std::cout << SDL_GetError() << std::endl;
         return ;
     }
+
+    // Open in second monitor if possible,
+    // just to make the debugging better
+    displays = SDL_GetDisplays(&displaysCount);
+
+    if (displaysCount > 1)
+    {
+        SDL_Rect bounds;
+        SDL_GetDisplayBounds(displays[1], &bounds);
+        SDL_SetWindowPosition(
+            window, 
+            bounds.x + (bounds.w - WIDTH) / 2,
+            bounds.y + (bounds.h - HEIGHT) / 2
+        );
+    }
+
+    SDL_free(displays);
 
     /* Start of Request Instance */
     std::vector<wgpu::InstanceFeatureName> requiredFeatures =
@@ -146,7 +163,10 @@ wgpu::Adapter Backend::RequestAdapter()
 {
     wgpu::RequestAdapterOptions requestAdapterOptions = {};
     requestAdapterOptions.compatibleSurface = surface;
+
+    // it should check the OS 
     // requestAdapterOptions.backendType = wgpu::BackendType::Vulkan;
+    requestAdapterOptions.backendType = wgpu::BackendType::D3D12;
 
     wgpu::Adapter adapter;
 
@@ -230,8 +250,11 @@ void Backend::ConfigureSurface()
 {
     wgpu::SurfaceCapabilities surfaceCap = {};
     this->surface.GetCapabilities(this->adapter, &surfaceCap);
-    this->format = surfaceCap.formats[0];
 
+    wgpu::TextureFormat surfaceFormat = surfaceCap.formats[0];
+    wgpu::TextureFormat renderFormat = surfaceFormat;
+    bool foundSrgbFormat = false;
+    
     for (size_t i = 0; i < surfaceCap.formatCount; i++)
     {
         auto candidate = surfaceCap.formats[i];
@@ -239,24 +262,67 @@ void Backend::ConfigureSurface()
         if (candidate == wgpu::TextureFormat::RGBA8UnormSrgb ||
             candidate == wgpu::TextureFormat::BGRA8UnormSrgb)
         {
-
-            this->format = candidate;
+            surfaceFormat = candidate;
+            renderFormat = candidate;
+            foundSrgbFormat = true;
             break;
         }
     }
 
+    /* 
+    if (!foundSrgbFormat)
+    {
+        I need to study more this, renderFormat and surfaceFormat
+        std::cout << "CRIT Problems ahead, let's stop bro!" << std::endl;
+        exit(1);
+    }
+    */
 
+    if (!foundSrgbFormat)
+     {
+         for (size_t i = 0; i < surfaceCap.formatCount; ++i)
+         {
+             const auto candidate = surfaceCap.formats[i];
+ 
+             if (candidate == wgpu::TextureFormat::RGBA8Unorm)
+             {
+                 surfaceFormat = candidate;
+                 renderFormat = wgpu::TextureFormat::RGBA8UnormSrgb;
+                 break;
+             }
+ 
+             if (candidate == wgpu::TextureFormat::BGRA8Unorm)
+             {
+                 surfaceFormat = candidate;
+                 renderFormat = wgpu::TextureFormat::BGRA8UnormSrgb;
+                 break;
+             }
+         }
+     }
+
+    this->format = renderFormat;
+    
     wgpu::SurfaceConfiguration surfaceConfig = {};
     surfaceConfig.nextInChain = nullptr;
     surfaceConfig.width = WIDTH;
     surfaceConfig.height = HEIGHT;
     surfaceConfig.usage = wgpu::TextureUsage::RenderAttachment;
-    surfaceConfig.format = this->format;
+    surfaceConfig.format = surfaceFormat;
     surfaceConfig.alphaMode = surfaceCap.alphaModes[0];
-    surfaceConfig.viewFormatCount = 0;
-    surfaceConfig.viewFormats = nullptr;
     surfaceConfig.device = this->device;
     surfaceConfig.presentMode = wgpu::PresentMode::Fifo;
+
+    if (renderFormat != surfaceFormat)
+    {
+        surfaceConfig.viewFormatCount = 1;
+        surfaceConfig.viewFormats = &this->format;
+    }
+    else
+    {
+        surfaceConfig.viewFormatCount = 0;
+        surfaceConfig.viewFormats = nullptr;
+    }
+    
     surface.Configure(&surfaceConfig);
 }
 

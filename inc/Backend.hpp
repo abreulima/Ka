@@ -1,13 +1,15 @@
 #ifndef BACKEND_HPP
 #define BACKEND_HPP
 
+#include "SDL3/SDL_video.h"
 #include <SDL3/SDL_gamepad.h>
+#include <cstddef>
 #include <webgpu/webgpu_cpp.h>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_keyboard.h>
 
-#define WIDTH 960
-#define HEIGHT 540
+#define WIDTH 1920
+#define HEIGHT 1080
 
 class Backend
 {
@@ -26,7 +28,9 @@ public:
     SDL_Window *window;
     SDL_Event events;
     SDL_Gamepad* gamepad = nullptr;
-
+    SDL_DisplayID* displays = nullptr;
+    int displaysCount = 0;
+    
     void Init();
 
     const bool* keys = nullptr;

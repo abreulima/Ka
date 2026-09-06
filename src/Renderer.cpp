@@ -13,6 +13,7 @@
 #include "Resources.hpp"
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/fwd.hpp"
+#include "glm/gtc/constants.hpp"
 #include <cstdint>
 #include <iostream>
 #include <iterator>
@@ -343,6 +344,7 @@ void Renderer::Render(std::vector<std::shared_ptr<Entity>>& entities, const glm:
             glm::vec2 renderPosition = entity->position - cameraOffset;
             //renderPosition = entity->position;
 
+            
             model = glm::translate(model, glm::vec3(renderPosition, 0.0f));
             model = glm::rotate(model, glm::radians(entity->rotation), glm::vec3(0.0f, 0.0f, 1.0f));
             model = glm::scale(model, glm::vec3(entity->textureSize * entity->scale, 1.0f));
@@ -359,6 +361,28 @@ void Renderer::Render(std::vector<std::shared_ptr<Entity>>& entities, const glm:
             material.uvRect = entity->isFlipped ?
                     glm::vec4(1.0f, 0.0f, -1.0f, 1.0f) :
                     glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+
+
+            if (entity->isAnimated)
+            {
+                entity->animations[entity->currentAnimationName].currentFrame++;
+                //std::cout << entity->animations[0].currentFrame << std::endl;
+                entity->animations[entity->currentAnimationName].currentFrame %= 8;
+            }
+                
+            if (entity->isAnimated)
+            {
+                material.uvRect = glm::vec4(
+                    entity->normalizedFrameSize.x * entity->animations[entity->currentAnimationName].currentFrame, 
+                    (float)entity->animations[entity->currentAnimationName].startY / entity->spriteSize.y, 
+                    entity->normalizedFrameSize.x, 
+                    entity->normalizedFrameSize.y
+                );
+
+                std::cout << entity->animations[entity->currentAnimationName].startY << std::endl;
+                //entity->components->
+            }
+            
 
             assert(entity->pipeline != nullptr);
             pass.SetPipeline(*entity->pipeline);
@@ -397,7 +421,8 @@ wgpu::TextureView Renderer::GetCurrentTextureView()
 
     wgpu::TextureViewDescriptor textureViewDesc = {};
     textureViewDesc.nextInChain = nullptr;
-    textureViewDesc.format = surfaceTexture.texture.GetFormat();
+    //textureViewDesc.format = surfaceTexture.texture.GetFormat();
+    textureViewDesc.format = this->format;
     textureViewDesc.dimension = wgpu::TextureViewDimension::e2D;
     textureViewDesc.baseMipLevel = 0;
     textureViewDesc.mipLevelCount = 1;

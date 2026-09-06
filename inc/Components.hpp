@@ -6,13 +6,39 @@
 #include <unordered_map>
 #include <any>
 #include <variant>
+#include <vector>
 
 #include "Renderer.hpp"
 #include "glm/fwd.hpp"
 
-struct Position { float x; float y; };
+struct Position { 
+    float x; float y; 
+
+    Position (float x, float y) : x(x), y(y) {}
+    Position (glm::vec2 pos) : x(pos.x), y(pos.y) {}
+    
+};
+
+
+
 struct Tag { std::string name; };
+
 struct Sprite { std::string name; };
+
+struct Animation {
+    int startY = 0;
+    float speed = 0;;
+    int currentFrame = 0;
+    int numFrames = 0;
+};
+
+struct AnimatedSprite {
+    std::string source;
+    glm::vec2 size;
+    std::string currentAnimation;
+    std::unordered_map<std::string, Animation> animations;
+};
+
 struct Fixed {};
 
 struct Scale { 
@@ -79,6 +105,7 @@ using Components = std::variant<
     Data,
     Line,
     Sprite,
+    AnimatedSprite,
     Fixed,
     Text,
     Rect,

@@ -1,3 +1,4 @@
+#include "Components.hpp"
 #include "Resources.hpp"
 #include <SDL3/SDL_pixels.h>
 #include <SDL3/SDL_rect.h>
@@ -15,6 +16,7 @@ void Entity::PopulateComponents(const std::vector<Components>& components)
 {
 
     // Default
+    // Maybe one day I will be able to get out from it
     tag = "*";
     isActive = true;
     position = glm::vec2(100, 100);
@@ -27,8 +29,11 @@ void Entity::PopulateComponents(const std::vector<Components>& components)
     //std::optional<glm::vec4> area = std::nullopt;
     rotation = 0.0f;
 
+    
     //Image* line = nullptr;
 
+    // This approach is very silly, I copy the contents of the entity
+    // then I loop 
     this->components = components;
 
     for (const auto& component : components)
@@ -54,6 +59,15 @@ void Entity::PopulateComponents(const std::vector<Components>& components)
                 this->sprite = c.name;
             }
 
+            else if constexpr (std::is_same_v<T, AnimatedSprite>)
+            {
+                this->isAnimated = true;
+                this->animationSize = c.size;
+                this->animations = c.animations;
+                this->currentAnimationName = c.currentAnimation; // CRIT
+                this->sprite = c.source;
+            }
+            
             else if constexpr (std::is_same_v<T, Fixed>)
             {
                 this->isFixed = true;
@@ -66,9 +80,6 @@ void Entity::PopulateComponents(const std::vector<Components>& components)
                     c.font,
                     c.color
                 );
-
-
-
             }
 
             else if constexpr (std::is_same_v<T, Line>)

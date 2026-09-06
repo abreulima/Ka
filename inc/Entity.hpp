@@ -4,6 +4,8 @@
 #include "Components.hpp"
 #include <SDL3/SDL_rect.h>
 #include <any>
+#include <string>
+#include <unordered_map>
 #include <variant>
 #include <vector>
 #include <functional>
@@ -49,6 +51,15 @@ class Entity
 
     Entity(Engine& engine) : engine(engine) {};
 
+
+    // Animation Related
+    bool isAnimated = false;
+    glm::vec2 animationSize = glm::vec2(0);
+    std::string currentAnimationName = "";
+    std::unordered_map<std::string, Animation> animations;
+    glm::vec2 normalizedFrameSize = glm::vec2(0);
+    glm::vec2 spriteSize;
+    
     //void LuaOnUpdate(float dt);
 
     // Text Related

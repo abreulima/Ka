@@ -11,20 +11,55 @@ SRCS    = \
         src\Resources.cpp \
         src\Scene.cpp
 
+OBJS    = \
+        build\msvc\main.obj \
+        build\msvc\Backend.obj \
+        build\msvc\Engine.obj \
+        build\msvc\Entity.obj \
+        build\msvc\Events.obj \
+        build\msvc\Renderer.obj \
+        build\msvc\Resources.obj \
+        build\msvc\Scene.obj
+
 VCPKG = C:\vcpkg
 TRIPLET = x64-windows
 
 CXXFLAGS = /std:c++latest /Od /W4 /EHsc \
            /Iinc \
-           /Iinc\lua \
            /I"$(VCPKG)\installed\$(TRIPLET)\include"
 
 LIBPATH = /LIBPATH:"$(VCPKG)\installed\$(TRIPLET)\lib"
 
 LIBS    = webgpu_dawn.lib SDL3.lib SDL3_ttf.lib
 
-all:
-    $(CXX) $(SRCS) $(CXXFLAGS) /Fe:$(NAME) /link $(LIBPATH) $(LIBS) /DEBUG
+all: $(NAME)
 
+$(NAME): $(OBJS) out\win
+    $(CXX) $(OBJS)  /Fe:$(NAME) /link $(LIBPATH) $(LIBS) /DEBUG
+
+build\msvc\main.obj: main.cpp build\msvc
+	$(CXX) $(CXXFLAGS) /c main.cpp /Fo:$@
+
+build\msvc\Backend.obj: src\Backend.cpp build\msvc
+	$(CXX) $(CXXFLAGS) /c src\Backend.cpp /Fo:$@
+
+build\msvc\Engine.obj: src\Engine.cpp build\msvc
+	$(CXX) $(CXXFLAGS) /c src\Engine.cpp /Fo:$@
+
+build\msvc\Entity.obj: src\Entity.cpp build\msvc
+	$(CXX) $(CXXFLAGS) /c src\Entity.cpp /Fo:$@
+
+build\msvc\Events.obj: src\Events.cpp build\msvc
+	$(CXX) $(CXXFLAGS) /c src\Events.cpp /Fo:$@
+
+build\msvc\Renderer.obj: src\Renderer.cpp build\msvc
+	$(CXX) $(CXXFLAGS) /c src\Renderer.cpp /Fo:$@
+
+build\msvc\Resources.obj: src\Resources.cpp build\msvc
+	$(CXX) $(CXXFLAGS) /c src\Resources.cpp /Fo:$@
+
+build\msvc\Scene.obj: src\Scene.cpp build\msvc
+	$(CXX) $(CXXFLAGS) /c src\Scene.cpp /Fo:$@
+	
 run: all
-    out\win\game.exe
+    $(NAME)
