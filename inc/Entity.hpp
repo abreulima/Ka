@@ -59,6 +59,8 @@ class Entity
     std::unordered_map<std::string, Animation> animations;
     glm::vec2 normalizedFrameSize = glm::vec2(0);
     glm::vec2 spriteSize;
+
+    void ChangeAnimation(std::string name);
     
     //void LuaOnUpdate(float dt);
 

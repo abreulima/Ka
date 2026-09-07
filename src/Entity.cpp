@@ -139,6 +139,15 @@ void Entity::Flip(bool state)
     isFlipped = state;
 }
 
+void Entity::ChangeAnimation(std::string name)
+{
+    // check if animation exists
+    // if not, warn me
+    // else go back to the first frame,
+    // change the anim. speed,
+    // change the animationName
+}
+
 SDL_FRect Entity::GetPositionRect()
 {
 

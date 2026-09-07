@@ -379,7 +379,7 @@ void Renderer::Render(std::vector<std::shared_ptr<Entity>>& entities, const glm:
                     entity->normalizedFrameSize.y
                 );
 
-                std::cout << entity->animations[entity->currentAnimationName].startY << std::endl;
+                //std::cout << entity->animations[entity->currentAnimationName].startY << std::endl;
                 //entity->components->
             }
             
