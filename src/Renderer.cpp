@@ -11,6 +11,8 @@
 
 #include "../inc/Entity.hpp"
 #include "Resources.hpp"
+#include "SDL3/SDL_oldnames.h"
+#include "SDL3/SDL_timer.h"
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/fwd.hpp"
 #include "glm/gtc/constants.hpp"
@@ -362,22 +364,32 @@ void Renderer::Render(std::vector<std::shared_ptr<Entity>>& entities, const glm:
                     glm::vec4(1.0f, 0.0f, -1.0f, 1.0f) :
                     glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
 
+            entity->currentTime = SDL_GetTicks();
 
-            if (entity->isAnimated)
+            
+            if (entity->isAnimated &&
+                (entity->currentTime - entity->lastFrameUpdate >= entity->duration))
             {
                 entity->animations[entity->currentAnimationName].currentFrame++;
-                //std::cout << entity->animations[0].currentFrame << std::endl;
                 entity->animations[entity->currentAnimationName].currentFrame %= 8;
+                //std::cout << "Hi" << std::endl;
+                //entity->timeout = SDL_GetTicks();
+                entity->lastFrameUpdate = entity->currentTime;
+
             }
-                
+        
+
+            
             if (entity->isAnimated)
             {
+                    
                 material.uvRect = glm::vec4(
                     entity->normalizedFrameSize.x * entity->animations[entity->currentAnimationName].currentFrame, 
                     (float)entity->animations[entity->currentAnimationName].startY / entity->spriteSize.y, 
                     entity->normalizedFrameSize.x, 
-                    entity->normalizedFrameSize.y
+                    entity->normalizedFrameSize.y  
                 );
+
 
                 //std::cout << entity->animations[entity->currentAnimationName].startY << std::endl;
                 //entity->components->

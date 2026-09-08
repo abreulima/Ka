@@ -66,6 +66,7 @@ void Entity::PopulateComponents(const std::vector<Components>& components)
                 this->animations = c.animations;
                 this->currentAnimationName = c.currentAnimation; // CRIT
                 this->sprite = c.source;
+                this->duration = c.duration;
             }
             
             else if constexpr (std::is_same_v<T, Fixed>)

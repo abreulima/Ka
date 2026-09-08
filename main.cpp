@@ -340,6 +340,7 @@ int main()
             .source = "run_complete2",
             .size = glm::vec2(64),
             .currentAnimation = "run",
+            .duration = 80,
             .animations = 
                 {
                     {"run", { .startY = 384,  .speed = 2.0f} }
@@ -356,6 +357,7 @@ int main()
             .source = "run_complete",
             .size = glm::vec2(64),
             .currentAnimation = "run",
+            .duration = 80,
             .animations = 
                 {
                     {"run", { .startY = 128,  .speed = 2.0f} }

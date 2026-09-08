@@ -2,6 +2,7 @@
 #define COMPONENTS_HPP
 
 #include <SDL3/SDL_pixels.h>
+#include <cstdint>
 #include <string>
 #include <unordered_map>
 #include <any>
@@ -36,6 +37,7 @@ struct AnimatedSprite {
     std::string source;
     glm::vec2 size;
     std::string currentAnimation;
+    uint32_t duration = 1000;
     std::unordered_map<std::string, Animation> animations;
 };
 

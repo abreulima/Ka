@@ -4,6 +4,7 @@
 #include "SDL3/SDL_video.h"
 #include <SDL3/SDL_gamepad.h>
 #include <cstddef>
+#include <cstdint>
 #include <webgpu/webgpu_cpp.h>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_keyboard.h>
@@ -30,6 +31,7 @@ public:
     SDL_Gamepad* gamepad = nullptr;
     SDL_DisplayID* displays = nullptr;
     int displaysCount = 0;
+    uint64_t currentTime = 0;
     
     void Init();
 

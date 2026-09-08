@@ -56,6 +56,7 @@ class Renderer
         wgpu::TextureFormat format;
         wgpu::Surface surface;
         wgpu::SurfaceTexture surfaceTexture;
+
         
         std::vector<LayerType> layers {LayerType::BG, LayerType::GAME, LayerType::FG, LayerType::UI};
         

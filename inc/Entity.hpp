@@ -4,6 +4,7 @@
 #include "Components.hpp"
 #include <SDL3/SDL_rect.h>
 #include <any>
+#include <cstdint>
 #include <string>
 #include <unordered_map>
 #include <variant>
@@ -39,6 +40,11 @@ class Entity
     float rotation;
     bool isHovered = false;
 
+    uint64_t duration = 500;
+    uint64_t lastFrameUpdate = 0;
+    uint64_t currentTime = 0;
+    
+    
     bool isFixed = false;
 
     std::optional<Image> line = std::nullopt;
